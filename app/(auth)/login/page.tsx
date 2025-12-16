@@ -94,7 +94,7 @@ export default function LoginPage() {
         } else if (userError || !userData) {
           // Show more detailed error for other cases
           const errorMessage = userError 
-            ? `Failed to fetch user information: ${userError.message}` 
+            ? `Failed to fetch user information: ${userError.message}`
             : "User record not found. Please contact an administrator to set up your account.";
           setError(errorMessage);
           setIsLoading(false);
