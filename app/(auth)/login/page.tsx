@@ -65,14 +65,38 @@ export default function LoginPage() {
 
       if (data.user) {
         // Fetch user role from users table
-        const { data: userData, error: userError } = await supabase
+        let { data: userData, error: userError } = await supabase
           .from("users")
           .select("role")
           .eq("id", data.user.id)
           .single();
 
-        if (userError || !userData) {
-          setError("Failed to fetch user information");
+        // If user record doesn't exist, create it with default 'customer' role
+        // This handles existing users who signed up before the trigger was added
+        if (userError && userError.code === "PGRST116") {
+          const { data: newUserData, error: createError } = await supabase
+            .from("users")
+            .insert({
+              id: data.user.id,
+              email: data.user.email || values.email,
+              role: "customer", // Default role, can be changed by admin later
+            })
+            .select("role")
+            .single();
+
+          if (createError) {
+            setError(`Failed to create user record: ${createError.message}`);
+            setIsLoading(false);
+            return;
+          }
+
+          userData = newUserData;
+        } else if (userError || !userData) {
+          // Show more detailed error for other cases
+          const errorMessage = userError 
+            ? `Failed to fetch user information: ${userError.message}` 
+            : "User record not found. Please contact an administrator to set up your account.";
+          setError(errorMessage);
           setIsLoading(false);
           return;
         }

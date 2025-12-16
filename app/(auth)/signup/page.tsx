@@ -72,9 +72,27 @@ export default function SignupPage() {
       }
 
       if (data.user) {
+        // Create user record in users table with default 'customer' role
+        // This ensures the user can login immediately
+        // The database trigger will also handle this automatically once migration is applied
+        const { error: userCreateError } = await supabase
+          .from("users")
+          .insert({
+            id: data.user.id,
+            email: data.user.email || values.email,
+            role: "customer", // Default role, can be changed by admin later
+          })
+          .select()
+          .single();
+
+        // If user record creation fails, log but don't block signup
+        // (The trigger should handle this, but this is a backup)
+        if (userCreateError && !userCreateError.message.includes("duplicate")) {
+          console.error("Failed to create user record:", userCreateError);
+          // Still show success - the trigger might create it, or admin can fix it
+        }
+
         setSuccess(true);
-        // Note: User role and customer_id should be set by admin or through a separate process
-        // For now, we'll just show success message
         setTimeout(() => {
           router.push("/login");
         }, 2000);
