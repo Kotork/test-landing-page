@@ -17,7 +17,21 @@ export default async function CustomerLayout({
   children: React.ReactNode;
 }) {
   // Protect route - require 'customer' role
-  const user = await requireAuth("customer");
+  type AuthenticatedUser = Awaited<ReturnType<typeof requireAuth>>;
+  let user: AuthenticatedUser;
+  try {
+    user = await requireAuth("customer");
+  } catch (error) {
+    if (error instanceof Error) {
+      if (error.message === "Unauthorized") {
+        redirect("/login");
+      }
+      if (error.message === "Forbidden") {
+        redirect("/forbidden");
+      }
+    }
+    throw error;
+  }
 
   const navigation = [
     { name: "Dashboard", href: "/customer/dashboard", icon: LayoutDashboard },
@@ -78,4 +92,3 @@ export default async function CustomerLayout({
     </div>
   );
 }
-

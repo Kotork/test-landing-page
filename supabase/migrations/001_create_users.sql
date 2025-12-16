@@ -13,12 +13,15 @@ CREATE TABLE users (
 
 -- Function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
 BEGIN
   NEW.updated_at = NOW();
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 -- Trigger for automatic updated_at timestamp updates on users table
 CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users
