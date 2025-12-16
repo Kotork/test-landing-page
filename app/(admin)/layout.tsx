@@ -1,7 +1,15 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { requireAuth } from "@/lib/utils/auth";
-import { LayoutDashboard, Users, FileText, BarChart3, LogOut } from "lucide-react";
+import {
+  LayoutDashboard,
+  Users,
+  FileText,
+  BarChart3,
+  LogOut,
+  UserCog,
+  Mail,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 
@@ -11,10 +19,26 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   // Protect route - require 'staff' role
-  const user = await requireAuth("staff");
+  type AuthenticatedUser = Awaited<ReturnType<typeof requireAuth>>;
+  let user: AuthenticatedUser;
+  try {
+    user = await requireAuth("staff");
+  } catch (error) {
+    if (error instanceof Error) {
+      if (error.message === "Unauthorized") {
+        redirect("/login");
+      }
+      if (error.message === "Forbidden") {
+        redirect("/forbidden");
+      }
+    }
+    throw error;
+  }
 
   const navigation = [
     { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
+    { name: "Users", href: "/admin/users", icon: UserCog },
+    { name: "Contacts", href: "/admin/contacts", icon: Mail },
     { name: "Customers", href: "/admin/customers", icon: Users },
     { name: "Landing Pages", href: "/admin/landing-pages", icon: FileText },
     { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
