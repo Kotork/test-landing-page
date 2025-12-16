@@ -30,7 +30,11 @@ CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users
 -- Function to automatically create user record when auth user is created
 -- This ensures that every auth.users entry has a corresponding users table entry
 CREATE OR REPLACE FUNCTION handle_new_user()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SET search_path = ''
+SECURITY DEFINER
+AS $$
 BEGIN
   INSERT INTO public.users (id, email, role)
   VALUES (
@@ -41,7 +45,7 @@ BEGIN
   ON CONFLICT (id) DO NOTHING; -- Prevent errors if user already exists
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
 -- Trigger on auth.users table to auto-create user record
 CREATE TRIGGER on_auth_user_created
