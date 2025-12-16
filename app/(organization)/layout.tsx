@@ -11,16 +11,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 
-export default async function CustomerLayout({
+export default async function OrganizationLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Protect route - require 'customer' role
+  // Protect route - require 'organization' role
   type AuthenticatedUser = Awaited<ReturnType<typeof requireAuth>>;
   let user: AuthenticatedUser;
   try {
-    user = await requireAuth("customer");
+    user = await requireAuth("organization");
+
+    console.log({ orgUser: user })
   } catch (error) {
     if (error instanceof Error) {
       if (error.message === "Unauthorized") {
@@ -34,10 +36,10 @@ export default async function CustomerLayout({
   }
 
   const navigation = [
-    { name: "Dashboard", href: "/customer/dashboard", icon: LayoutDashboard },
-    { name: "Landing Pages", href: "/customer/landing-pages", icon: FileText },
-    { name: "Contacts", href: "/customer/contacts", icon: Users },
-    { name: "Analytics", href: "/customer/analytics", icon: BarChart3 },
+    { name: "Dashboard", href: "/organization/dashboard", icon: LayoutDashboard },
+    { name: "Landing Pages", href: "/organization/landing-pages", icon: FileText },
+    { name: "Contacts", href: "/organization/contacts", icon: Users },
+    { name: "Analytics", href: "/organization/analytics", icon: BarChart3 },
   ];
 
   return (

@@ -63,7 +63,7 @@ export const contactQuerySchema = paginationParams.extend({
 });
 
 export const newsletterBaseSchema = z.object({
-  customerId: z.string().uuid().nullable().optional(),
+  organizationId: z.string().uuid().nullable().optional(),
   email: z
     .string()
     .min(3, "Email is required")
@@ -111,7 +111,7 @@ export const updateNewsletterSchema = newsletterBaseSchema.extend({
 });
 
 export const contactBaseSchema = z.object({
-  customerId: z.string().uuid().nullable().optional(),
+  organizationId: z.string().uuid().nullable().optional(),
   name: z
     .string()
     .trim()

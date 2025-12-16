@@ -136,7 +136,7 @@ const DEFAULT_SORTING: SortingState = [{ id: "created_at", desc: true }];
 const ROLE_OPTIONS = [
   { label: "All roles", value: "all" },
   { label: "Staff", value: "staff" },
-  { label: "Customer", value: "customer" },
+  { label: "Organization", value: "organization" },
 ] as const;
 
 const STATUS_OPTIONS = [
@@ -270,7 +270,7 @@ function buildColumns(
         const role = row.original.role;
         return (
           <Badge variant={role === "staff" ? "default" : "muted"}>
-            {role === "staff" ? "Staff" : "Customer"}
+            {role === "staff" ? "Staff" : "Organization"}
           </Badge>
         );
       },
@@ -733,7 +733,7 @@ function UsersPage() {
         <div>
           <h1 className="text-2xl font-semibold">User Management</h1>
           <p className="text-muted-foreground">
-            Review all customer and staff accounts. Filter, search, and update
+            Review all organization and staff accounts. Filter, search, and update
             profiles from a single view.
           </p>
         </div>
@@ -1269,7 +1269,7 @@ function UserFormDialog(props: UserFormDialogProps) {
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="staff">Staff</SelectItem>
-                        <SelectItem value="customer">Customer</SelectItem>
+                        <SelectItem value="organization">Organization</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />

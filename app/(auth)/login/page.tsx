@@ -71,7 +71,7 @@ export default function LoginPage() {
           .eq("id", data.user.id)
           .single();
 
-        // If user record doesn't exist, create it with default 'customer' role
+        // If user record doesn't exist, create it with default 'organization' role
         // This handles existing users who signed up before the trigger was added
         if (userError && userError.code === "PGRST116") {
           const { data: newUserData, error: createError } = await supabase
@@ -79,7 +79,7 @@ export default function LoginPage() {
             .insert({
               id: data.user.id,
               email: data.user.email || values.email,
-              role: "customer", // Default role, can be changed by admin later
+              role: "organization", // Default role, can be changed by admin later
             })
             .select("role")
             .single();
@@ -103,9 +103,10 @@ export default function LoginPage() {
 
         // Redirect based on role
         if (userData.role === "staff") {
+          console.log({ role: userData.role })
           router.push("/admin/dashboard");
-        } else if (userData.role === "customer") {
-          router.push("/customer/dashboard");
+        } else if (userData.role === "user") {
+          router.push("/organization/dashboard");
         } else {
           router.push("/");
         }

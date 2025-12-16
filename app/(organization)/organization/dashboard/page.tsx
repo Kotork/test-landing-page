@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default function CustomerDashboard() {
+export default function OrganizationDashboard() {
   return (
     <div className="space-y-6">
       <div>

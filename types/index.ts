@@ -1,4 +1,4 @@
-export type UserRole = "staff" | "customer";
+export type UserRole = "staff" | "organization";
 export type UserStatus = "pending" | "active" | "disabled";
 export type NewsletterSubscriptionStatus =
   | "pending"
@@ -27,12 +27,12 @@ export interface User {
   disabled_reason?: string | null;
   onboarding_note?: string | null;
   invited_at?: string | null;
-  customer_id?: string;
+  organization_id?: string;
   created_at: string;
   updated_at: string;
 }
 
-export interface Customer {
+export interface Organization {
   id: string;
   name: string;
   subdomain: string;
@@ -44,7 +44,7 @@ export interface Customer {
 
 export interface NewsletterSubmission {
   id: string;
-  customer_id?: string | null;
+  organization_id?: string | null;
   email: string;
   name?: string | null;
   marketing_opt_in: boolean;
@@ -65,7 +65,7 @@ export interface NewsletterSubmission {
 
 export interface ContactSubmission {
   id: string;
-  customer_id?: string | null;
+  organization_id?: string | null;
   name?: string | null;
   email: string;
   marketing_opt_in: boolean;

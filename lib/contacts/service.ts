@@ -218,10 +218,10 @@ export async function createNewsletterSubmission({
     .select("id")
     .eq("email", input.email);
 
-  if (input.customerId) {
-    duplicateQuery = duplicateQuery.eq("customer_id", input.customerId);
+  if (input.organizationId) {
+    duplicateQuery = duplicateQuery.eq("organization_id", input.organizationId);
   } else {
-    duplicateQuery = duplicateQuery.is("customer_id", null);
+    duplicateQuery = duplicateQuery.is("organization_id", null);
   }
 
   duplicateQuery = duplicateQuery.eq("is_archived", false);
@@ -234,7 +234,7 @@ export async function createNewsletterSubmission({
       payload: {
         fieldErrors: {
           email: [
-            "This email address already has an active subscription for the selected customer.",
+            "This email address already has an active subscription for the selected organization.",
           ],
         },
       },
@@ -246,7 +246,7 @@ export async function createNewsletterSubmission({
   const { data, error } = await supabase
     .from("newsletter_submissions")
     .insert({
-      customer_id: input.customerId ?? null,
+      organization_id: input.organizationId ?? null,
       email: input.email,
       name: input.name?.trim() ? input.name.trim() : null,
       marketing_opt_in: input.marketingOptIn,
@@ -300,16 +300,16 @@ export async function updateNewsletterSubmission({
     throw new HttpError({ status: 404, message: "Newsletter submission not found" });
   }
 
-  if (input.email !== existing.email || input.customerId !== existing.customer_id) {
+  if (input.email !== existing.email || input.organizationId !== existing.organization_id) {
     let duplicateQuery = supabase
       .from("newsletter_submissions")
       .select("id")
       .eq("email", input.email);
 
-    if (input.customerId) {
-      duplicateQuery = duplicateQuery.eq("customer_id", input.customerId);
+    if (input.organizationId) {
+      duplicateQuery = duplicateQuery.eq("organization_id", input.organizationId);
     } else {
-      duplicateQuery = duplicateQuery.is("customer_id", null);
+      duplicateQuery = duplicateQuery.is("organization_id", null);
     }
     duplicateQuery = duplicateQuery.eq("is_archived", false).neq("id", input.id);
 
@@ -330,7 +330,7 @@ export async function updateNewsletterSubmission({
   }
 
   const updates: Partial<NewsletterSubmission> & Record<string, unknown> = {
-    customer_id: input.customerId ?? null,
+    organization_id: input.organizationId ?? null,
     email: input.email,
     name: input.name?.trim() ? input.name.trim() : null,
     marketing_opt_in: input.marketingOptIn,
@@ -407,7 +407,7 @@ export async function createContactSubmission({
   const { data, error } = await supabase
     .from("contact_submissions")
     .insert({
-      customer_id: input.customerId ?? null,
+      organization_id: input.organizationId ?? null,
       name: input.name?.trim() ? input.name.trim() : null,
       email: input.email,
       marketing_opt_in: input.marketingOptIn,
@@ -464,7 +464,7 @@ export async function updateContactSubmission({
   }
 
   const updates: Partial<ContactSubmission> & Record<string, unknown> = {
-    customer_id: input.customerId ?? null,
+    organization_id: input.organizationId ?? null,
     name: input.name?.trim() ? input.name.trim() : null,
     email: input.email,
     marketing_opt_in: input.marketingOptIn,

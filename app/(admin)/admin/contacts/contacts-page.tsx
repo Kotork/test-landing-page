@@ -602,7 +602,7 @@ function NewsletterTab() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             subscriptionStatus: submission.subscription_status,
-            customerId: submission.customer_id,
+            organizationId: submission.organization_id,
             email: submission.email,
             name: submission.name,
             marketingOptIn: submission.marketing_opt_in,
@@ -965,7 +965,7 @@ function NewsletterFormDialog(props: NewsletterFormDialogProps) {
         } as FormValues)
       : ({
           id: props.submission?.id ?? "",
-          customerId: props.submission?.customer_id ?? undefined,
+          organizationId: props.submission?.organization_id ?? undefined,
           email: props.submission?.email ?? "",
           name: props.submission?.name ?? "",
           marketingOptIn: props.submission?.marketing_opt_in ?? false,
@@ -989,7 +989,7 @@ function NewsletterFormDialog(props: NewsletterFormDialogProps) {
     if (!isCreate && props.submission) {
       form.reset({
         id: props.submission.id,
-        customerId: props.submission.customer_id ?? undefined,
+        organizationId: props.submission.organization_id ?? undefined,
         email: props.submission.email,
         name: props.submission.name ?? "",
         marketingOptIn: props.submission.marketing_opt_in,

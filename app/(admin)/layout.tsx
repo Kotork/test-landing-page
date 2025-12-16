@@ -23,6 +23,8 @@ export default async function AdminLayout({
   let user: AuthenticatedUser;
   try {
     user = await requireAuth("staff");
+
+    console.log({ adminUser: user })
   } catch (error) {
     if (error instanceof Error) {
       if (error.message === "Unauthorized") {
@@ -39,7 +41,7 @@ export default async function AdminLayout({
     { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
     { name: "Users", href: "/admin/users", icon: UserCog },
     { name: "Contacts", href: "/admin/contacts", icon: Mail },
-    { name: "Customers", href: "/admin/customers", icon: Users },
+    { name: "Organizations", href: "/admin/organizations", icon: Users },
     { name: "Landing Pages", href: "/admin/landing-pages", icon: FileText },
     { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
   ];

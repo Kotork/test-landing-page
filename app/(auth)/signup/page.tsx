@@ -72,7 +72,7 @@ export default function SignupPage() {
       }
 
       if (data.user) {
-        // Create user record in users table with default 'customer' role
+        // Create user record in users table with default 'organization' role
         // This ensures the user can login immediately
         // The database trigger will also handle this automatically once migration is applied
         const { error: userCreateError } = await supabase
@@ -80,7 +80,7 @@ export default function SignupPage() {
           .insert({
             id: data.user.id,
             email: data.user.email || values.email,
-            role: "customer", // Default role, can be changed by admin later
+            role: "organization", // Default role, can be changed by admin later
           })
           .select()
           .single();

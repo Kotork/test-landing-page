@@ -6,7 +6,7 @@ This feature consolidates newsletter subscriptions and contact form messages for
 
 Two migrations introduce dedicated tables:
 
-- `016_create_newsletter_submissions.sql` – adds `newsletter_submissions` with subscription status, marketing preference, audit metadata, and soft-delete fields (`is_archived`, `archived_at/by/reason`). Unique constraint prevents duplicate active subscriptions per `customer_id + email`.
+- `016_create_newsletter_submissions.sql` – adds `newsletter_submissions` with subscription status, marketing preference, audit metadata, and soft-delete fields (`is_archived`, `archived_at/by/reason`). Unique constraint prevents duplicate active subscriptions per `organization_id + email`.
 - `017_create_contact_submissions.sql` – adds `contact_submissions` with message content, lifecycle status, marketing flag, and soft-delete metadata.
 
 Both tables share `created_by` / `updated_by` references to admin users. Trigger `update_updated_at_column` keeps timestamps fresh. Migration `018_create_admin_activity_logs.sql` introduces a generic `admin_activity_logs` table used to record destructive/critical operations (archives, status changes) with the acting admin ID.

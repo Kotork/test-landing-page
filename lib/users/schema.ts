@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const userStatusEnum = z.enum(["pending", "active", "disabled"]);
-export const userRoleEnum = z.enum(["staff", "customer"]);
+export const userRoleEnum = z.enum(["staff", "organization"]);
 
 export const userQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
