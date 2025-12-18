@@ -88,7 +88,7 @@ import {
   type UpdateUserInput,
   createUserSchema,
   updateUserSchema,
-} from "@/lib/users/schema";
+} from "@/lib/server/users/schema";
 import type { User, UserStatus } from "@/types";
 
 type AdminUser = User & {
@@ -733,8 +733,8 @@ function UsersPage() {
         <div>
           <h1 className="text-2xl font-semibold">User Management</h1>
           <p className="text-muted-foreground">
-            Review all organization and staff accounts. Filter, search, and update
-            profiles from a single view.
+            Review all organization and staff accounts. Filter, search, and
+            update profiles from a single view.
           </p>
         </div>
         <Button size="lg" onClick={() => setCreateOpen(true)}>
@@ -1269,7 +1269,9 @@ function UserFormDialog(props: UserFormDialogProps) {
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="staff">Staff</SelectItem>
-                        <SelectItem value="organization">Organization</SelectItem>
+                        <SelectItem value="organization">
+                          Organization
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />

@@ -19,7 +19,7 @@ import { useToast } from "@/components/ui/use-toast";
 import {
   updateOrganizationSchema,
   type UpdateOrganizationInput,
-} from "@/lib/organizations/schema";
+} from "@/lib/server/organizations/schema";
 import type { Organization } from "@/types";
 
 export default function OrganizationDetailPage() {

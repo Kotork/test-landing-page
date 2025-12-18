@@ -5,7 +5,7 @@ import {
   createContactSubmission,
   listContactSubmissions,
   serializeContactsError,
-} from "@/lib/contacts/service";
+} from "@/lib/server/contacts/service";
 import { requireAuth } from "@/lib/utils/auth";
 
 function handleAuthError(error: unknown) {
@@ -66,5 +66,3 @@ export async function POST(request: Request) {
     return NextResponse.json(serialized.body, { status: serialized.status });
   }
 }
-
-

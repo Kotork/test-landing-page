@@ -1,31 +1,48 @@
-import { columns, Payment } from "./components/columns";
-import { DataTable } from "./components/data-table";
-import { headers } from "next/headers";
+"use client";
 
-async function getData(): Promise<Payment[]> {
-  const headersList = await headers();
-  const host = headersList.get("host");
-  const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
-  const baseUrl = `${protocol}://${host}`;
+import { columns, OrganizationColumn } from "./components/columns";
+import { DataTable } from "../../../../components/data-table/data-table";
+import { useOrganizations } from "./hooks/use-organizations";
 
-  const response = await fetch(`${baseUrl}/api/v1/admin/organizations`, {
-    cache: "no-store",
-  });
+export default function Page() {
+  const { data, isLoading, error } = useOrganizations();
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch organizations");
+  if (isLoading) {
+    return (
+      <div className="container mx-auto py-10">
+        <div className="text-center">Loading organizations...</div>
+      </div>
+    );
   }
 
-  const data = await response.json();
-  return data.organizations || [];
-}
+  if (error) {
+    return (
+      <div className="container mx-auto py-10">
+        <div className="text-center text-destructive">
+          Error loading organizations: {error.message}
+        </div>
+      </div>
+    );
+  }
 
-export default async function Page() {
-  const data = await getData();
+  const handleAddNew = () => {
+    console.log("Add New");
+  };
 
   return (
     <div className="container mx-auto py-10">
-      <DataTable columns={columns} data={data} />
+      <DataTable<OrganizationColumn, unknown>
+        columns={columns}
+        data={data || []}
+        primaryAction={{
+          label: "Add New",
+          onClick: () => handleAddNew(),
+        }}
+        secondaryAction={{
+          label: "Delete",
+          onClick: () => handleAddNew(),
+        }}
+      />
     </div>
   );
 }

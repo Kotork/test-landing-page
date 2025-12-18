@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import {
   serializeContactsError,
   updateContactSubmission,
-} from "@/lib/contacts/service";
+} from "@/lib/server/contacts/service";
 import { requireAuth } from "@/lib/utils/auth";
 
 function handleAuthError(error: unknown) {
@@ -43,5 +43,3 @@ export async function PATCH(
     return NextResponse.json(serialized.body, { status: serialized.status });
   }
 }
-
-

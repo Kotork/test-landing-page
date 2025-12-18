@@ -75,7 +75,7 @@ import {
   updateLandingPageSchema,
   type CreateLandingPageInput,
   type UpdateLandingPageInput,
-} from "@/lib/landing-pages/schema";
+} from "@/lib/server/landing-pages/schema";
 import type { LandingPage } from "@/types";
 
 type LandingPageRow = LandingPage;

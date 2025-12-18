@@ -1,6 +1,9 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
-import { serializeValidationError, updateUser } from "@/lib/users/service";
+import {
+  serializeValidationError,
+  updateUser,
+} from "@/lib/server/users/service";
 import { requireAuth } from "@/lib/utils/auth";
 import { NextResponse } from "next/server";
 

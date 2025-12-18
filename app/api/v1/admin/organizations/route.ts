@@ -3,7 +3,7 @@ import {
   listOrganizations,
   createOrganization,
   serializeOrganizationError,
-} from "@/lib/organizations/service";
+} from "@/lib/server/organizations/service";
 import { requireAuth } from "@/lib/utils/auth";
 import { NextResponse } from "next/server";
 
@@ -24,7 +24,9 @@ function handleAuthError(error: unknown) {
 export async function GET(request: Request) {
   try {
     const staffUser = await requireAuth("staff");
-    void staffUser;
+
+    console.log({ staffUser });
+
     const supabase = await createClient();
 
     const searchParams = Object.fromEntries(

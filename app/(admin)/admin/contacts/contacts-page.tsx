@@ -93,11 +93,8 @@ import {
   type CreateNewsletterInput,
   type UpdateContactInput,
   type UpdateNewsletterInput,
-} from "@/lib/contacts/schema";
-import type {
-  ContactSubmission,
-  NewsletterSubmission,
-} from "@/types";
+} from "@/lib/server/contacts/schema";
+import type { ContactSubmission, NewsletterSubmission } from "@/types";
 
 type NewsletterRow = NewsletterSubmission;
 type ContactRow = ContactSubmission;
@@ -203,14 +200,14 @@ function SortableHeader<TData>({
   );
 }
 
-function useNewsletterColumns(onAction: (row: NewsletterRow, action: string) => void) {
+function useNewsletterColumns(
+  onAction: (row: NewsletterRow, action: string) => void
+) {
   return React.useMemo<ColumnDef<NewsletterRow>[]>(() => {
     return [
       {
         accessorKey: "name",
-        header: ({ column }) => (
-          <SortableHeader label="Name" column={column} />
-        ),
+        header: ({ column }) => <SortableHeader label="Name" column={column} />,
         cell: ({ row }) => {
           const submission = row.original;
           return (
@@ -242,7 +239,9 @@ function useNewsletterColumns(onAction: (row: NewsletterRow, action: string) => 
           <SortableHeader label="Status" column={column} />
         ),
         cell: ({ row }) => (
-          <Badge variant={newsletterStatusVariant[row.original.subscription_status]}>
+          <Badge
+            variant={newsletterStatusVariant[row.original.subscription_status]}
+          >
             {row.original.subscription_status.replace("_", " ")}
           </Badge>
         ),
@@ -283,7 +282,10 @@ function useNewsletterColumns(onAction: (row: NewsletterRow, action: string) => 
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onSelect={() =>
-                    onAction(submission, submission.is_archived ? "unarchive" : "archive")
+                    onAction(
+                      submission,
+                      submission.is_archived ? "unarchive" : "archive"
+                    )
                   }
                 >
                   {submission.is_archived ? (
@@ -309,9 +311,7 @@ function useContactColumns(
     return [
       {
         accessorKey: "name",
-        header: ({ column }) => (
-          <SortableHeader label="Name" column={column} />
-        ),
+        header: ({ column }) => <SortableHeader label="Name" column={column} />,
         cell: ({ row }) => {
           const submission = row.original;
           return (
@@ -393,7 +393,10 @@ function useContactColumns(
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onSelect={() =>
-                    onAction(submission, submission.is_archived ? "unarchive" : "archive")
+                    onAction(
+                      submission,
+                      submission.is_archived ? "unarchive" : "archive"
+                    )
                   }
                 >
                   {submission.is_archived ? (
@@ -422,11 +425,15 @@ export default function ContactsPage() {
       <header className="space-y-1">
         <h1 className="text-2xl font-semibold">Contacts &amp; Leads</h1>
         <p className="text-muted-foreground">
-          Review newsletter subscribers and inbound messages. Track engagement and manage follow-ups in one place.
+          Review newsletter subscribers and inbound messages. Track engagement
+          and manage follow-ups in one place.
         </p>
       </header>
 
-      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as typeof activeTab)}>
+      <Tabs
+        value={activeTab}
+        onValueChange={(value) => setActiveTab(value as typeof activeTab)}
+      >
         <TabsList>
           <TabsTrigger value="newsletter">Newsletter</TabsTrigger>
           <TabsTrigger value="contacts">Contacts</TabsTrigger>
@@ -525,13 +532,17 @@ function NewsletterTab() {
           error?: string;
         };
         if (!response.ok) {
-          throw new Error(json.error ?? "Failed to load newsletter submissions.");
+          throw new Error(
+            json.error ?? "Failed to load newsletter submissions."
+          );
         }
         setData(json.submissions ?? []);
         setTotal(json.total ?? 0);
       } catch (error) {
         setErrorMessage(
-          error instanceof Error ? error.message : "Failed to load newsletter submissions."
+          error instanceof Error
+            ? error.message
+            : "Failed to load newsletter submissions."
         );
         setData([]);
         setTotal(0);
@@ -541,13 +552,7 @@ function NewsletterTab() {
     }
 
     void loadData();
-  }, [
-    pagination,
-    sorting,
-    debouncedSearch,
-    filters,
-    refreshIndex,
-  ]);
+  }, [pagination, sorting, debouncedSearch, filters, refreshIndex]);
 
   const onAction = React.useCallback(
     (submission: NewsletterRow, action: string) => {
@@ -583,7 +588,10 @@ function NewsletterTab() {
   const totalPages = Math.max(1, Math.ceil(total / pagination.pageSize));
   const currentPage = pagination.pageIndex + 1;
   const from = total === 0 ? 0 : pagination.pageIndex * pagination.pageSize + 1;
-  const to = Math.min(total, pagination.pageIndex * pagination.pageSize + data.length);
+  const to = Math.min(
+    total,
+    pagination.pageIndex * pagination.pageSize + data.length
+  );
 
   async function archiveSubmission({
     submission,
@@ -661,7 +669,10 @@ function NewsletterTab() {
           <Select
             value={filters.status}
             onValueChange={(value) => {
-              setFilters((prev) => ({ ...prev, status: value as NewsletterFilters["status"] }));
+              setFilters((prev) => ({
+                ...prev,
+                status: value as NewsletterFilters["status"],
+              }));
               setPagination((prev) => ({ ...prev, pageIndex: 0 }));
             }}
           >
@@ -701,7 +712,10 @@ function NewsletterTab() {
             type="date"
             value={filters.startDate ?? ""}
             onChange={(event) =>
-              setFilters((prev) => ({ ...prev, startDate: event.target.value || undefined }))
+              setFilters((prev) => ({
+                ...prev,
+                startDate: event.target.value || undefined,
+              }))
             }
             className="w-36"
           />
@@ -709,7 +723,10 @@ function NewsletterTab() {
             type="date"
             value={filters.endDate ?? ""}
             onChange={(event) =>
-              setFilters((prev) => ({ ...prev, endDate: event.target.value || undefined }))
+              setFilters((prev) => ({
+                ...prev,
+                endDate: event.target.value || undefined,
+              }))
             }
             className="w-36"
           />
@@ -768,14 +785,20 @@ function NewsletterTab() {
                   <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center text-muted-foreground"
+                  >
                     {errorMessage ?? "No subscribers found."}
                   </TableCell>
                 </TableRow>
@@ -898,7 +921,15 @@ function NewsletterTab() {
               placeholder="Add an optional note explaining why this subscriber is archived."
               onChange={(event) =>
                 setArchiving((prev) =>
-                  prev ? { ...prev, submission: { ...prev.submission, archived_reason: event.target.value } } : prev
+                  prev
+                    ? {
+                        ...prev,
+                        submission: {
+                          ...prev.submission,
+                          archived_reason: event.target.value,
+                        },
+                      }
+                    : prev
                 )
               }
             />
@@ -911,7 +942,9 @@ function NewsletterTab() {
                 archiveSubmission({
                   submission: archiving.submission,
                   archive: archiving.archive,
-                  reason: archiving.archive ? archiving.submission.archived_reason ?? undefined : undefined,
+                  reason: archiving.archive
+                    ? archiving.submission.archived_reason ?? undefined
+                    : undefined,
                 })
               }
             >
@@ -947,7 +980,8 @@ function NewsletterFormDialog(props: NewsletterFormDialogProps) {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const resolver = React.useMemo<Resolver<any>>(
-    () => zodResolver(isCreate ? createNewsletterSchema : updateNewsletterSchema),
+    () =>
+      zodResolver(isCreate ? createNewsletterSchema : updateNewsletterSchema),
     [isCreate]
   );
 
@@ -969,7 +1003,8 @@ function NewsletterFormDialog(props: NewsletterFormDialogProps) {
           email: props.submission?.email ?? "",
           name: props.submission?.name ?? "",
           marketingOptIn: props.submission?.marketing_opt_in ?? false,
-          subscriptionStatus: props.submission?.subscription_status ?? "pending",
+          subscriptionStatus:
+            props.submission?.subscription_status ?? "pending",
           confirmedAt: props.submission?.confirmed_at ?? undefined,
           unsubscribedAt: props.submission?.unsubscribed_at ?? undefined,
           bounceReason: props.submission?.bounce_reason ?? "",
@@ -1048,7 +1083,11 @@ function NewsletterFormDialog(props: NewsletterFormDialogProps) {
       onOpenChange(false);
       form.reset();
     } catch (error) {
-      setServerError(error instanceof Error ? error.message : "Unexpected error saving subscriber.");
+      setServerError(
+        error instanceof Error
+          ? error.message
+          : "Unexpected error saving subscriber."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -1059,7 +1098,9 @@ function NewsletterFormDialog(props: NewsletterFormDialogProps) {
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>
-            {isCreate ? "New newsletter subscriber" : "Edit newsletter subscriber"}
+            {isCreate
+              ? "New newsletter subscriber"
+              : "Edit newsletter subscriber"}
           </DialogTitle>
           <DialogDescription>
             {isCreate
@@ -1071,7 +1112,9 @@ function NewsletterFormDialog(props: NewsletterFormDialogProps) {
         <Form {...form}>
           <form
             className="space-y-5"
-            onSubmit={form.handleSubmit((values) => void handleSubmit(values as FormValues))}
+            onSubmit={form.handleSubmit(
+              (values) => void handleSubmit(values as FormValues)
+            )}
           >
             <div className="grid gap-4 md:grid-cols-2">
               <FormField
@@ -1081,7 +1124,11 @@ function NewsletterFormDialog(props: NewsletterFormDialogProps) {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="subscriber@example.com" {...field} />
+                      <Input
+                        type="email"
+                        placeholder="subscriber@example.com"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -1136,7 +1183,8 @@ function NewsletterFormDialog(props: NewsletterFormDialogProps) {
                       <div>
                         <FormLabel>Marketing opt-in</FormLabel>
                         <FormDescription>
-                          Indicates if the subscriber agrees to receive marketing emails.
+                          Indicates if the subscriber agrees to receive
+                          marketing emails.
                         </FormDescription>
                       </div>
                       <FormControl>
@@ -1163,11 +1211,14 @@ function NewsletterFormDialog(props: NewsletterFormDialogProps) {
                       <Input
                         type="datetime-local"
                         value={field.value ? field.value.slice(0, 16) : ""}
-                        onChange={(event) => field.onChange(event.target.value || undefined)}
+                        onChange={(event) =>
+                          field.onChange(event.target.value || undefined)
+                        }
                       />
                     </FormControl>
                     <FormDescription>
-                      Record when the subscriber confirmed their email (optional).
+                      Record when the subscriber confirmed their email
+                      (optional).
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -1183,7 +1234,9 @@ function NewsletterFormDialog(props: NewsletterFormDialogProps) {
                       <Input
                         type="datetime-local"
                         value={field.value ? field.value.slice(0, 16) : ""}
-                        onChange={(event) => field.onChange(event.target.value || undefined)}
+                        onChange={(event) =>
+                          field.onChange(event.target.value || undefined)
+                        }
                       />
                     </FormControl>
                     <FormDescription>
@@ -1229,7 +1282,8 @@ function NewsletterFormDialog(props: NewsletterFormDialogProps) {
                         Archive this subscriber
                       </FormLabel>
                       <FormDescription>
-                        Archived subscribers are hidden from active lists but retained for historical reporting.
+                        Archived subscribers are hidden from active lists but
+                        retained for historical reporting.
                       </FormDescription>
                       <FormMessage />
                     </div>
@@ -1352,15 +1406,15 @@ function ContactTab() {
           error?: string;
         };
         if (!response.ok) {
-          throw new Error(
-            json.error ?? "Failed to load contact submissions."
-          );
+          throw new Error(json.error ?? "Failed to load contact submissions.");
         }
         setData(json.submissions ?? []);
         setTotal(json.total ?? 0);
       } catch (error) {
         setErrorMessage(
-          error instanceof Error ? error.message : "Failed to load contact submissions."
+          error instanceof Error
+            ? error.message
+            : "Failed to load contact submissions."
         );
         setData([]);
         setTotal(0);
@@ -1370,13 +1424,7 @@ function ContactTab() {
     }
 
     void loadData();
-  }, [
-    pagination,
-    sorting,
-    debouncedSearch,
-    filters,
-    refreshIndex,
-  ]);
+  }, [pagination, sorting, debouncedSearch, filters, refreshIndex]);
 
   const onAction = React.useCallback(
     (submission: ContactRow, action: string) => {
@@ -1416,7 +1464,10 @@ function ContactTab() {
   const totalPages = Math.max(1, Math.ceil(total / pagination.pageSize));
   const currentPage = pagination.pageIndex + 1;
   const from = total === 0 ? 0 : pagination.pageIndex * pagination.pageSize + 1;
-  const to = Math.min(total, pagination.pageIndex * pagination.pageSize + data.length);
+  const to = Math.min(
+    total,
+    pagination.pageIndex * pagination.pageSize + data.length
+  );
 
   async function archiveSubmission({
     submission,
@@ -1493,7 +1544,10 @@ function ContactTab() {
           <Select
             value={filters.status}
             onValueChange={(value) => {
-              setFilters((prev) => ({ ...prev, status: value as ContactFilters["status"] }));
+              setFilters((prev) => ({
+                ...prev,
+                status: value as ContactFilters["status"],
+              }));
               setPagination((prev) => ({ ...prev, pageIndex: 0 }));
             }}
           >
@@ -1533,7 +1587,10 @@ function ContactTab() {
             type="date"
             value={filters.startDate ?? ""}
             onChange={(event) =>
-              setFilters((prev) => ({ ...prev, startDate: event.target.value || undefined }))
+              setFilters((prev) => ({
+                ...prev,
+                startDate: event.target.value || undefined,
+              }))
             }
             className="w-36"
           />
@@ -1541,7 +1598,10 @@ function ContactTab() {
             type="date"
             value={filters.endDate ?? ""}
             onChange={(event) =>
-              setFilters((prev) => ({ ...prev, endDate: event.target.value || undefined }))
+              setFilters((prev) => ({
+                ...prev,
+                endDate: event.target.value || undefined,
+              }))
             }
             className="w-36"
           />
@@ -1600,14 +1660,20 @@ function ContactTab() {
                   <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center text-muted-foreground"
+                  >
                     {errorMessage ?? "No contacts found."}
                   </TableCell>
                 </TableRow>
@@ -1763,7 +1829,10 @@ function ContactTab() {
         </AlertDialogContent>
       </AlertDialog>
 
-      <Dialog open={Boolean(viewing)} onOpenChange={(open) => !open && setViewing(null)}>
+      <Dialog
+        open={Boolean(viewing)}
+        onOpenChange={(open) => !open && setViewing(null)}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>{viewing?.subject ?? "Contact message"}</DialogTitle>
@@ -1906,7 +1975,11 @@ function ContactFormDialog(props: ContactFormDialogProps) {
       onOpenChange(false);
       form.reset();
     } catch (error) {
-      setServerError(error instanceof Error ? error.message : "Unexpected error saving submission.");
+      setServerError(
+        error instanceof Error
+          ? error.message
+          : "Unexpected error saving submission."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -1929,7 +2002,9 @@ function ContactFormDialog(props: ContactFormDialogProps) {
         <Form {...form}>
           <form
             className="space-y-5"
-            onSubmit={form.handleSubmit((values) => void handleSubmit(values as FormValues))}
+            onSubmit={form.handleSubmit(
+              (values) => void handleSubmit(values as FormValues)
+            )}
           >
             <div className="grid gap-4 md:grid-cols-2">
               <FormField
@@ -1952,7 +2027,11 @@ function ContactFormDialog(props: ContactFormDialogProps) {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="contact@example.com" {...field} />
+                      <Input
+                        type="email"
+                        placeholder="contact@example.com"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -1980,11 +2059,15 @@ function ContactFormDialog(props: ContactFormDialogProps) {
                       <div>
                         <FormLabel>Marketing opt-in</FormLabel>
                         <FormDescription>
-                          Indicates whether this contact consented to marketing communication.
+                          Indicates whether this contact consented to marketing
+                          communication.
                         </FormDescription>
                       </div>
                       <FormControl>
-                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
                       </FormControl>
                     </div>
                     <FormMessage />
@@ -2049,7 +2132,9 @@ function ContactFormDialog(props: ContactFormDialogProps) {
                       <Input
                         type="datetime-local"
                         value={field.value ? field.value.slice(0, 16) : ""}
-                        onChange={(event) => field.onChange(event.target.value || undefined)}
+                        onChange={(event) =>
+                          field.onChange(event.target.value || undefined)
+                        }
                       />
                     </FormControl>
                     <FormMessage />
@@ -2066,7 +2151,9 @@ function ContactFormDialog(props: ContactFormDialogProps) {
                       <Input
                         type="datetime-local"
                         value={field.value ? field.value.slice(0, 16) : ""}
-                        onChange={(event) => field.onChange(event.target.value || undefined)}
+                        onChange={(event) =>
+                          field.onChange(event.target.value || undefined)
+                        }
                       />
                     </FormControl>
                     <FormMessage />
@@ -2092,7 +2179,8 @@ function ContactFormDialog(props: ContactFormDialogProps) {
                         Archive this contact
                       </FormLabel>
                       <FormDescription>
-                        Archived contacts are removed from active queues and marked as completed.
+                        Archived contacts are removed from active queues and
+                        marked as completed.
                       </FormDescription>
                       <FormMessage />
                     </div>
@@ -2148,4 +2236,3 @@ function ContactFormDialog(props: ContactFormDialogProps) {
     </Dialog>
   );
 }
-

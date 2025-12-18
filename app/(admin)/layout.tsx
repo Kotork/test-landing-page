@@ -1,17 +1,18 @@
-import { redirect } from "next/navigation";
-import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { QueryProvider } from '@/lib/client/providers/query-provider';
+import { createClient } from "@/lib/supabase/server";
 import { requireAuth } from "@/lib/utils/auth";
 import {
-  LayoutDashboard,
-  Users,
-  FileText,
   BarChart3,
+  FileText,
+  LayoutDashboard,
   LogOut,
-  UserCog,
   Mail,
+  UserCog,
+  Users,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/server";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export default async function AdminLayout({
   children,
@@ -24,9 +25,9 @@ export default async function AdminLayout({
   try {
     user = await requireAuth();
 
-    console.log({ adminUser: user })
+    console.log({ adminUser: user });
   } catch (error) {
-    console.log({ error })
+    console.log({ error });
     if (error instanceof Error) {
       if (error.message === "Unauthorized") {
         redirect("/login");
@@ -94,9 +95,10 @@ export default async function AdminLayout({
 
       {/* Main content */}
       <main className="flex-1 overflow-y-auto">
-        <div className="container mx-auto p-6">{children}</div>
+        <div className="container mx-auto p-6">
+          <QueryProvider>{children}</QueryProvider>
+        </div>
       </main>
     </div>
   );
 }
-

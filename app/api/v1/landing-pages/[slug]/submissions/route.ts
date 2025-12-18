@@ -4,7 +4,7 @@ import { validateApiKeyRequest } from "@/lib/utils/api-auth";
 import {
   customSubmissionSchema,
   type CustomSubmissionInput,
-} from "@/lib/landing-pages/schema";
+} from "@/lib/server/landing-pages/schema";
 
 export async function POST(
   request: Request,

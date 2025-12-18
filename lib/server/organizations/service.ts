@@ -57,6 +57,8 @@ export async function listOrganizations({
     });
   }
 
+  console.log({ data, error, count });
+
   return {
     organizations: data ?? [],
     total: count ?? data?.length ?? 0,

@@ -9,9 +9,10 @@ import {
 import { cn } from "@/lib/utils/cn";
 import { type Column } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp, ChevronsUpDown, EyeOff } from "lucide-react";
+import { HTMLAttributes } from "react";
 
 interface DataTableColumnHeaderProps<TData, TValue>
-  extends React.HTMLAttributes<HTMLDivElement> {
+  extends HTMLAttributes<HTMLDivElement> {
   column: Column<TData, TValue>;
   title: string;
 }

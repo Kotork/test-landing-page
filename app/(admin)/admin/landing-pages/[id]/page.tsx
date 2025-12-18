@@ -41,7 +41,7 @@ import {
   updateLandingPageSchema,
   apiKeyBaseSchema,
   type UpdateLandingPageInput,
-} from "@/lib/landing-pages/schema";
+} from "@/lib/server/landing-pages/schema";
 import { z } from "zod";
 import type { LandingPage, ApiKey } from "@/types";
 

@@ -4,7 +4,7 @@ import {
   createUser,
   listUsers,
   serializeValidationError,
-} from "@/lib/users/service";
+} from "@/lib/server/users/service";
 import { requireAuth } from "@/lib/utils/auth";
 import { NextResponse } from "next/server";
 

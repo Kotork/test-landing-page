@@ -1,8 +1,8 @@
 "use client";
 
-import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
+import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from '@/components/ui/checkbox';
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,18 +12,47 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, ArrowUpDown } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
+import { useRouter } from "next/navigation";
+import type { Organization } from "../hooks/use-organizations";
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-export type Payment = {
-  id: string;
-  amount: number;
-  status: "pending" | "processing" | "success" | "failed";
-  email: string;
-};
+export type OrganizationColumn = Organization;
 
-export const columns: ColumnDef<Payment>[] = [
+function RowActions({ organization }: { organization: Organization }) {
+  const router = useRouter();
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="h-8 w-8 p-0">
+          <span className="sr-only">Open menu</span>
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+        <DropdownMenuItem
+          onClick={() => router.push(`/admin/organizations/${organization.id}`)}
+        >
+          View details
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => navigator.clipboard.writeText(organization.id)}
+        >
+          Copy organization ID
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={() => navigator.clipboard.writeText(organization.subdomain)}
+        >
+          Copy subdomain
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+export const columns: ColumnDef<OrganizationColumn>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -47,54 +76,81 @@ export const columns: ColumnDef<Payment>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "status",
-    header: "Status",
-  },
-  {
-    accessorKey: "email",
+    accessorKey: "name",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Email" />
+      <DataTableColumnHeader column={column} title="Name" />
     ),
+    cell: ({ row }) => {
+      const organization = row.original;
+      return (
+        <div className="flex items-center gap-3">
+          {organization.logo_url && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={organization.logo_url}
+              alt={organization.name}
+              className="h-8 w-8 rounded object-cover"
+              onError={(e) => {
+                e.currentTarget.style.display = "none";
+              }}
+            />
+          )}
+          <span className="font-medium">{organization.name}</span>
+        </div>
+      );
+    },
   },
   {
-    accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
+    accessorKey: "subdomain",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Subdomain" />
+    ),
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
-
-      return <div className="text-right font-medium">{formatted}</div>;
+      const subdomain = row.getValue("subdomain") as string;
+      return <span className="font-mono text-sm">{subdomain}</span>;
+    },
+  },
+  {
+    accessorKey: "created_at",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Created" />
+    ),
+    cell: ({ row }) => {
+      const date = new Date(row.getValue("created_at"));
+      return (
+        <div className="text-sm">
+          {date.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "updated_at",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Last Updated" />
+    ),
+    cell: ({ row }) => {
+      const date = new Date(row.getValue("updated_at"));
+      return (
+        <div className="text-sm text-muted-foreground">
+          {date.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })}
+        </div>
+      );
     },
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const payment = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+      const organization = row.original;
+      return <RowActions organization={organization} />;
     },
   },
 ];
