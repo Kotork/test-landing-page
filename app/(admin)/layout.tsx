@@ -22,10 +22,11 @@ export default async function AdminLayout({
   type AuthenticatedUser = Awaited<ReturnType<typeof requireAuth>>;
   let user: AuthenticatedUser;
   try {
-    user = await requireAuth("staff");
+    user = await requireAuth();
 
     console.log({ adminUser: user })
   } catch (error) {
+    console.log({ error })
     if (error instanceof Error) {
       if (error.message === "Unauthorized") {
         redirect("/login");

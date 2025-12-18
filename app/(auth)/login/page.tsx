@@ -52,10 +52,11 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email: values.email,
-        password: values.password,
-      });
+      const { data, error: signInError } =
+        await supabase.auth.signInWithPassword({
+          email: values.email,
+          password: values.password,
+        });
 
       if (signInError) {
         setError(signInError.message);
@@ -93,7 +94,7 @@ export default function LoginPage() {
           userData = newUserData;
         } else if (userError || !userData) {
           // Show more detailed error for other cases
-          const errorMessage = userError 
+          const errorMessage = userError
             ? `Failed to fetch user information: ${userError.message}`
             : "User record not found. Please contact an administrator to set up your account.";
           setError(errorMessage);
@@ -103,10 +104,8 @@ export default function LoginPage() {
 
         // Redirect based on role
         if (userData.role === "staff") {
-          console.log({ role: userData.role })
+          console.log({ role: userData.role });
           router.push("/admin/dashboard");
-        } else if (userData.role === "user") {
-          router.push("/organization/dashboard");
         } else {
           router.push("/");
         }
@@ -192,4 +191,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

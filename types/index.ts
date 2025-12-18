@@ -1,4 +1,4 @@
-export type UserRole = "staff" | "organization";
+export type UserRole = "staff" | "user";
 export type UserStatus = "pending" | "active" | "disabled";
 export type NewsletterSubscriptionStatus =
   | "pending"
@@ -93,5 +93,37 @@ export interface AdminActivityLog {
   action: string;
   details?: Record<string, unknown> | null;
   acted_by?: string | null;
+  created_at: string;
+}
+
+export interface LandingPage {
+  id: string;
+  organization_id: string;
+  name: string;
+  slug: string;
+  domain?: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  created_by?: string | null;
+}
+
+export interface ApiKey {
+  id: string;
+  landing_page_id: string;
+  key_hash: string;
+  name: string;
+  last_used_at?: string | null;
+  expires_at?: string | null;
+  is_active: boolean;
+  created_at: string;
+  created_by?: string | null;
+}
+
+export interface LandingPageSubmission {
+  id: string;
+  landing_page_id: string;
+  data: Record<string, unknown>;
+  submission_type: "newsletter" | "contact" | "analytics" | "custom";
   created_at: string;
 }
