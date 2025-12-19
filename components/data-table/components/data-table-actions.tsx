@@ -9,15 +9,17 @@ import { ReactNode } from "react";
 export interface DataTableActionsProps {
   primaryAction?: ButtonAction;
   secondaryAction?: ButtonAction;
+  customAction: ReactNode;
   className?: string;
 }
 
 export function DataTableActions({
   primaryAction,
   secondaryAction,
+  customAction,
   className,
 }: DataTableActionsProps) {
-  if (!primaryAction && !secondaryAction) {
+  if (!primaryAction && !secondaryAction && !customAction) {
     return null;
   }
 
@@ -57,6 +59,11 @@ export function DataTableActions({
           {renderIcon(primaryAction.icon)}
           {primaryAction.label}
         </Button>
+      )}
+      {customAction && (
+        <div className="flex items-center gap-2">
+          {customAction}
+        </div>
       )}
     </div>
   );

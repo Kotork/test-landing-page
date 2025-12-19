@@ -23,9 +23,12 @@ import {
 } from "@/components/ui/table";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { DataTablePagination } from "@/components/data-table/data-table-pagination";
-import { DataTableViewOptions } from "@/components/data-table/data-table-view-options";
-import { DataTableActions, DataTableActionsProps } from './data-table-actions';
+import { DataTablePagination } from "@/components/data-table/components/data-table-pagination";
+import { DataTableViewOptions } from "@/components/data-table/components/data-table-view-options";
+import {
+  DataTableActions,
+  DataTableActionsProps,
+} from "./components/data-table-actions";
 
 interface DataTableProps<TData, TValue> extends DataTableActionsProps {
   columns: ColumnDef<TData, TValue>[];
@@ -37,6 +40,7 @@ export function DataTable<TData, TValue>({
   data,
   primaryAction,
   secondaryAction,
+  customAction,
 }: DataTableProps<TData, TValue>) {
   "use no memo";
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -79,7 +83,12 @@ export function DataTable<TData, TValue>({
 
         <DataTableViewOptions table={table} />
 
-        <DataTableActions primaryAction={primaryAction} secondaryAction={secondaryAction} className='ml-2' />
+        <DataTableActions
+          primaryAction={primaryAction}
+          secondaryAction={secondaryAction}
+          customAction={customAction}
+          className="ml-2"
+        />
       </div>
 
       {/* Table header */}

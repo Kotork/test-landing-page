@@ -3,6 +3,9 @@
 import { columns, OrganizationColumn } from "./components/columns";
 import { DataTable } from "../../../../components/data-table/data-table";
 import { useOrganizations } from "./hooks/use-organizations";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetTrigger } from "@/components/ui/sheet";
+import { SheetForm } from "@/components/sheet-form/sheet-form";
 
 export default function Page() {
   const { data, isLoading, error } = useOrganizations();
@@ -34,14 +37,13 @@ export default function Page() {
       <DataTable<OrganizationColumn, unknown>
         columns={columns}
         data={data || []}
-        primaryAction={{
-          label: "Add New",
-          onClick: () => handleAddNew(),
-        }}
-        secondaryAction={{
-          label: "Delete",
-          onClick: () => handleAddNew(),
-        }}
+        customAction={
+          <SheetForm
+            label="Add New Organization"
+            title="Add New Organization"
+            description="Add a new organization to the system"
+          />
+        }
       />
     </div>
   );

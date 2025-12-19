@@ -25,7 +25,9 @@ export async function GET(request: Request) {
   try {
     const staffUser = await requireAuth("staff");
 
-    console.log({ staffUser });
+    if (!staffUser) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const supabase = await createClient();
 

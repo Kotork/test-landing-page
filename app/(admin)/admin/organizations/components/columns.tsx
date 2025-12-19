@@ -1,6 +1,6 @@
 "use client";
 
-import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
+import { DataTableColumnHeader } from "@/components/data-table/components/data-table-column-header";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
