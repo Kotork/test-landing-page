@@ -9,6 +9,7 @@ CREATE TABLE organizations (
   logo_url TEXT,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW(),
-  created_by UUID
+  created_by UUID,
+  is_active BOOLEAN DEFAULT TRUE
 );
 

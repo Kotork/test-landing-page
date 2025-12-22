@@ -8,6 +8,7 @@ export type Organization = {
   created_at: string;
   updated_at: string;
   created_by: string;
+  is_active: boolean;
 };
 
 type OrganizationsResponse = {

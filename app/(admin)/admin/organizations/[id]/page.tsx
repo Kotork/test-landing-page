@@ -6,9 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -38,6 +40,7 @@ export default function OrganizationDetailPage() {
       name: "",
       subdomain: "",
       logo_url: "",
+      is_active: true,
     },
   });
 
@@ -48,6 +51,7 @@ export default function OrganizationDetailPage() {
         name: organization.name,
         subdomain: organization.subdomain,
         logo_url: organization.logo_url || "",
+        is_active: organization.is_active,
       });
     }
   }, [organization, form]);
@@ -136,6 +140,26 @@ export default function OrganizationDetailPage() {
                       <Input {...field} />
                     </FormControl>
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="is_active"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 shadow-sm">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">Active Status</FormLabel>
+                      <FormDescription>
+                        Disable this organization to prevent access.
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
                   </FormItem>
                 )}
               />

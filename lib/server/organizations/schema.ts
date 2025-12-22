@@ -30,6 +30,7 @@ export const organizationBaseSchema = z.object({
       z.literal(""),
     ])
     .optional(),
+  is_active: z.boolean().default(true),
 });
 
 export const createOrganizationSchema = organizationBaseSchema;

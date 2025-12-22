@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { QueryProvider } from '@/lib/client/providers/query-provider';
+import { QueryProvider } from "@/lib/client/providers/query-provider";
 import { createClient } from "@/lib/supabase/server";
 import { requireAuth } from "@/lib/utils/auth";
 import {
@@ -43,7 +43,9 @@ export default async function AdminLayout({
     { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
     { name: "Users", href: "/admin/users", icon: UserCog },
     { name: "Contacts", href: "/admin/contacts", icon: Mail },
-    { name: "Organizations", href: "/admin/organizations", icon: Users },
+    ...(user.role === "staff"
+      ? [{ name: "Organizations", href: "/admin/organizations", icon: Users }]
+      : []),
     { name: "Landing Pages", href: "/admin/landing-pages", icon: FileText },
     { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
   ];
