@@ -41,6 +41,7 @@ import {
   updateLandingPageSchema,
   apiKeyBaseSchema,
   type UpdateLandingPageInput,
+  type CreateApiKeyInput,
 } from "@/lib/server/landing-pages/schema";
 import { z } from "zod";
 import type { LandingPage, ApiKey } from "@/types";
@@ -63,6 +64,13 @@ export default function LandingPageDetailPage() {
 
   const form = useForm<UpdateLandingPageInput>({
     resolver: zodResolver(updateLandingPageSchema),
+    defaultValues: {
+      name: "",
+      slug: "",
+      domain: "",
+      isActive: true,
+      id: "00000000-0000-0000-0000-000000000000",
+    },
   });
 
   React.useEffect(() => {
@@ -138,15 +146,20 @@ export default function LandingPageDetailPage() {
     }
   };
 
-  const handleCreateApiKey = async (values: CreateApiKeyInput) => {
+  const handleCreateApiKey = async (values: z.infer<typeof apiKeyBaseSchema>) => {
     setIsCreatingKey(true);
     try {
+      const payload: CreateApiKeyInput = {
+        ...values,
+        landingPageId: id,
+      };
+
       const response = await fetch(
         `/api/organization/landing-pages/${id}/api-keys`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(values),
+          body: JSON.stringify(payload),
         }
       );
 

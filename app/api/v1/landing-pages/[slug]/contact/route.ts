@@ -8,14 +8,15 @@ import {
 
 export async function POST(
   request: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
     // Validate API key and get landing page data
     const keyData = await validateApiKeyRequest(request);
+    const { slug } = await params;
 
     // Verify slug matches the API key's landing page
-    if (keyData.landingPage.slug !== params.slug) {
+    if (keyData.landingPage.slug !== slug) {
       return NextResponse.json(
         { error: "Landing page slug mismatch" },
         { status: 403 }

@@ -30,7 +30,7 @@ export const landingPageBaseSchema = z.object({
     )
     .optional()
     .or(z.literal("")),
-  isActive: z.boolean().default(true),
+  isActive: z.boolean(),
 });
 
 export const createLandingPageSchema = landingPageBaseSchema;
@@ -83,7 +83,7 @@ export const contactSubmissionSchema = z.object({
 });
 
 export const customSubmissionSchema = z.object({
-  data: z.record(z.any()),
+  data: z.record(z.string(), z.any()),
   submissionType: z.enum(["newsletter", "contact", "analytics", "custom"]),
 });
 

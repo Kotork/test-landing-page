@@ -48,7 +48,7 @@ type UpdateApiKeyArgs = {
 };
 
 function applyLandingPageFilters(
-  builder: ReturnType<SupabaseClient["from"]>,
+  builder: any,
   filters: z.infer<typeof landingPageQuerySchema>
 ) {
   if (filters.search) {

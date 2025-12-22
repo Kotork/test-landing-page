@@ -23,10 +23,11 @@ function handleAuthError(error: unknown) {
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const staffUser = await requireAuth("staff");
+    const { id } = await params;
     const supabase = await createClient();
     const adminClient = createAdminClient();
     const payload = await request.json();
@@ -36,7 +37,7 @@ export async function PATCH(
       adminClient,
       payload: {
         ...payload,
-        id: params.id,
+        id,
       },
       actingUserId: staffUser.id,
     });

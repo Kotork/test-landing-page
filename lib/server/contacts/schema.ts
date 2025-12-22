@@ -42,6 +42,7 @@ export const newsletterQuerySchema = paginationParams.extend({
     .enum([
       "submitted_at",
       "email",
+      "name",
       "subscription_status",
       "marketing_opt_in",
       "created_at",
@@ -134,7 +135,7 @@ export const contactBaseSchema = z.object({
     .trim()
     .min(1, "Message is required")
     .max(5000, "Message must be under 5000 characters"),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
   status: contactStatusEnum.default("new"),
   respondedAt: z.string().datetime().optional().nullable(),
   lastFollowUpAt: z.string().datetime().optional().nullable(),

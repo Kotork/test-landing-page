@@ -20,7 +20,7 @@ import {
   updateOrganizationSchema,
   type UpdateOrganizationInput,
 } from "@/lib/server/organizations/schema";
-import type { Organization } from "@/types";
+import { useOrganization, useUpdateOrganization } from "../hooks/use-organization";
 
 export default function OrganizationDetailPage() {
   const router = useRouter();
@@ -28,63 +28,33 @@ export default function OrganizationDetailPage() {
   const { toast } = useToast();
   const id = params.id as string;
 
-  const [organization, setOrganization] = React.useState<Organization | null>(
-    null
-  );
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [isSaving, setIsSaving] = React.useState(false);
+  const { data: organization, isLoading, error } = useOrganization(id);
+  const { mutateAsync: updateOrg, isPending: isSaving } = useUpdateOrganization();
 
   const form = useForm<UpdateOrganizationInput>({
     resolver: zodResolver(updateOrganizationSchema),
+    defaultValues: {
+      id: id,
+      name: "",
+      subdomain: "",
+      logo_url: "",
+    },
   });
 
   React.useEffect(() => {
-    loadData();
-  }, [id]);
-
-  const loadData = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch(`/api/admin/organizations/${id}`);
-
-      if (!response.ok) throw new Error("Failed to load organization");
-
-      const data = await response.json();
-      setOrganization(data);
+    if (organization) {
       form.reset({
-        id: data.id,
-        name: data.name,
-        subdomain: data.subdomain,
-        logo_url: data.logo_url || "",
+        id: organization.id,
+        name: organization.name,
+        subdomain: organization.subdomain,
+        logo_url: organization.logo_url || "",
       });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load organization",
-        variant: "destructive",
-      });
-      router.push("/admin/organizations");
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [organization, form]);
 
   const onSubmit = async (values: UpdateOrganizationInput) => {
-    setIsSaving(true);
     try {
-      const response = await fetch(`/api/admin/organizations/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to update organization");
-      }
-
-      const updated = await response.json();
-      setOrganization(updated);
+      await updateOrg({ id, data: values });
       toast({
         title: "Success",
         description: "Organization updated successfully",
@@ -98,8 +68,6 @@ export default function OrganizationDetailPage() {
             : "Failed to update organization",
         variant: "destructive",
       });
-    } finally {
-      setIsSaving(false);
     }
   };
 
@@ -107,8 +75,17 @@ export default function OrganizationDetailPage() {
     return <div className="space-y-6">Loading...</div>;
   }
 
-  if (!organization) {
-    return <div className="space-y-6">Organization not found</div>;
+  if (error || !organization) {
+    return (
+      <div className="space-y-6">
+        <div className="text-destructive">
+          {error instanceof Error ? error.message : "Organization not found"}
+        </div>
+        <Button variant="outline" onClick={() => router.push("/admin/organizations")}>
+          Back to Organizations
+        </Button>
+      </div>
+    );
   }
 
   return (

@@ -4,6 +4,7 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import {
   type ColumnDef,
+  type Column,
   type SortingState,
   flexRender,
   getCoreRowModel,
@@ -399,9 +400,9 @@ export default function LandingPagesPage() {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>

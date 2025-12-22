@@ -21,16 +21,17 @@ function handleAuthError(error: unknown) {
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const admin = await requireAuth("staff");
+    const { id } = await params;
     const supabase = await createClient();
     const payload = await request.json();
 
     const submission = await updateContactSubmission({
       supabase,
-      payload: { ...payload, id: params.id },
+      payload: { ...payload, id },
       actingUserId: admin.id,
     });
 

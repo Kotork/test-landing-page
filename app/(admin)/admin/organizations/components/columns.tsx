@@ -11,44 +11,113 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useToast } from "@/components/ui/use-toast";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import type { Organization } from "../hooks/use-organizations";
+import { useDeleteOrganization } from "../hooks/use-organization";
 
 export type OrganizationColumn = Organization;
 
 function RowActions({ organization }: { organization: Organization }) {
   const router = useRouter();
+  const { toast } = useToast();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const { mutateAsync: deleteOrg, isPending: isDeleting } = useDeleteOrganization();
+
+  const handleDelete = async () => {
+    try {
+      await deleteOrg(organization.id);
+      toast({
+        title: "Success",
+        description: "Organization deleted successfully",
+      });
+      setDeleteDialogOpen(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to delete organization",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <span className="sr-only">Open menu</span>
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem
-          onClick={() => router.push(`/admin/organizations/${organization.id}`)}
-        >
-          View details
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => navigator.clipboard.writeText(organization.id)}
-        >
-          Copy organization ID
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={() => navigator.clipboard.writeText(organization.subdomain)}
-        >
-          Copy subdomain
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuItem
+            onClick={() =>
+              router.push(`/admin/organizations/${organization.id}`)
+            }
+          >
+            View details
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => navigator.clipboard.writeText(organization.id)}
+          >
+            Copy organization ID
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => navigator.clipboard.writeText(organization.subdomain)}
+          >
+            Copy subdomain
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={() => setDeleteDialogOpen(true)}
+            className="text-destructive"
+          >
+            <Trash2 className="mr-2 h-4 w-4" />
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete organization?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete "{organization.name}" and all
+              associated data. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
 

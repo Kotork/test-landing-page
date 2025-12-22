@@ -81,7 +81,7 @@ async function logAdminActivity(
 }
 
 function applyNewsletterFilters(
-  builder: ReturnType<SupabaseClient["from"]>,
+  builder: any,
   filters: z.infer<typeof newsletterQuerySchema>
 ) {
   if (filters.search) {
@@ -107,7 +107,7 @@ function applyNewsletterFilters(
 }
 
 function applyContactFilters(
-  builder: ReturnType<SupabaseClient["from"]>,
+  builder: any,
   filters: z.infer<typeof contactQuerySchema>
 ) {
   if (filters.search) {
@@ -144,16 +144,16 @@ export async function listNewsletterSubmissions({
 
   let builder = supabase
     .from("newsletter_submissions")
-    .select("*", { count: "exact" })
+    .select("*", { count: "exact" });
+
+  builder = applyNewsletterFilters(builder, filters);
+
+  const { data, error, count } = await builder
     .order(filters.sortBy, {
       ascending: filters.sortDir === "asc",
       nullsFirst: filters.sortBy === "name",
     })
     .range(from, to);
-
-  builder = applyNewsletterFilters(builder, filters);
-
-  const { data, error, count } = await builder;
   if (error) {
     throw new HttpError({
       status: 500,
@@ -180,16 +180,16 @@ export async function listContactSubmissions({
 
   let builder = supabase
     .from("contact_submissions")
-    .select("*", { count: "exact" })
+    .select("*", { count: "exact" });
+
+  builder = applyContactFilters(builder, filters);
+
+  const { data, error, count } = await builder
     .order(filters.sortBy, {
       ascending: filters.sortDir === "asc",
       nullsFirst: false,
     })
     .range(from, to);
-
-  builder = applyContactFilters(builder, filters);
-
-  const { data, error, count } = await builder;
   if (error) {
     throw new HttpError({
       status: 500,
